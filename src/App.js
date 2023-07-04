@@ -2,57 +2,83 @@ import { useState } from "react";
 import Banner from "./Components/Banner";
 import Form from "./Components/Form";
 import Team from "./Components/Team";
+import { v4 as uuidv4 } from 'uuid'
 
 function App() {
 
     const [colaborators, setColaborators] = useState([])
-    const teams = [
+    const [teams, setTeams] = useState([
         {
+            id: uuidv4(),
             name: 'Programação',
-            PrimaryColor: '#57c278',
-            SecondaryColor: '#d9f7e9',
+            color: '#57c278',
         },
         {
+            id: uuidv4(),
             name: 'Front-End',
-            PrimaryColor: '#82CFFA',
-            SecondaryColor: '#E8F8FF',
+            color: '#82CFFA',
         },
         {
+            id: uuidv4(),
             name: 'Data Science',
-            PrimaryColor: '#A60157',
-            SecondaryColor: '#F0F8E2¹',
+            color: '#A60157',
         },
         {
+            id: uuidv4(),
             name: 'Devops',
-            PrimaryColor: '#E06869',
-            SecondaryColor: '#FDE7E8',
+            color: '#E06869',
         },
         {
+            id: uuidv4(),
             name: 'UX e Design',
-            PrimaryColor: '#DB6EBF',
-            SecondaryColor: '#FAE9FS',
+            color: '#DB6EBF',
         },
         {
+            id: uuidv4(),
             name: 'Mobile',
-            PrimaryColor: '#FFBA05',
-            SecondaryColor: '#FFF5D9',
+            color: '#FFBA05',
         },
         {
+            id: uuidv4(),
             name: 'Inovação e Gestão',
-            PrimaryColor: '#FF8A29',
-            SecondaryColor: '#FFEEDF',
+            color: '#FF8A29',
         }
-    ]
+    ]);
 
     const onNewColaboratorSaved = (colaborator) => {
         setColaborators([...colaborators, colaborator])
     }
 
+    function onNewTeamSaved(newTeam) {
+        setTeams([...teams, { ...newTeam, id: uuidv4() }])
+    }
+
+    function resolveFavorite(id) {
+        setColaborators(colaborators.map(colaborator => {
+            if (colaborator.id === id) colaborator.favorite = !colaborator.favorite;
+            return colaborator
+        }
+        ))
+    }
+
+    function deleteColaborator(id) {
+        setColaborators(colaborators.filter(colaborator => colaborator.id !== id))
+    }
+
+    function changeTeamColor(color, id) {
+        setTeams(teams.map(team => {
+            if (team.id === id) {
+                team.color = color;
+            }
+            return team;
+        }));
+    }
+
     return (
         <div className="App">
             <Banner />
-            <Form teams={teams.map(team => team.name)} onSaveColaborator={colaborator => onNewColaboratorSaved(colaborator)} />
-            {teams.map(team => <Team key={team.name} name={team.name} PrimaryColor={team.PrimaryColor} SecondaryColor={team.SecondaryColor} colaborators={colaborators.filter(colaborator => colaborator.team === team.name)}/>)}
+            <Form teams={teams.map(team => team.name)} onSaveColaborator={colaborator => onNewColaboratorSaved(colaborator)} onSaveTeam={onNewTeamSaved} />
+            {teams.map(team => <Team key={team.name} team={team} colaborators={colaborators.filter(colaborator => colaborator.team === team.name)} onDelete={deleteColaborator} changeTeamColor={changeTeamColor} onFavorite={resolveFavorite} />)}
         </div>
     );
 }

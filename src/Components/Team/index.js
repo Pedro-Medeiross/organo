@@ -1,14 +1,18 @@
 import "./Team.css"
 import "./"
 import Colaborator from "../Colaborator"
+import hexToRgba from "hex-to-rgba"
 
-const Team = (props) => {
+const Team = ({ team, colaborators ,onDelete, changeTeamColor, onFavorite}) => {
     return (
-        props.colaborators.length > 0 ?
-        <section className="team" style={{ backgroundColor: props.SecondaryColor }}>
-            <h3 style={{ borderColor: props.PrimaryColor }}>{props.name}</h3>
+        colaborators.length > 0 ?
+        <section className="team" style={{ backgroundColor: hexToRgba(team.color, '0.6') }}>
+            <input type='color' className="input-color" value={team.color} onChange={event => changeTeamColor(event.target.value, team.id)} />
+            <h3 style={{ borderColor: team.color }}>{team.name}</h3>
             <div className="colaborators">
-                {props.colaborators.map(colaborator => <Colaborator key={colaborator.name} name={colaborator.name} role={colaborator.role} image={colaborator.image} backgroundColor={props.PrimaryColor} />)}
+                {colaborators.map(colaborator => {
+                    return <Colaborator key={colaborator.name} id={colaborator.id} colaborator={colaborator} backgroundColor={team.color} onDelete={onDelete} onFavorite={onFavorite} />
+                })}
             </div>
         </section>
         : ''
